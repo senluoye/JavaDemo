@@ -12,10 +12,9 @@ public class StockController {
     @Autowired
     private StockService stockService;
 
-    @GetMapping("stock/deduct")
+    @GetMapping("/stock/deduct")
     public String deduct(){
-        this.stockService.deduct();
+        this.stockService.checkAndLock();
         return "hello stock deduct！！";
     }
-
 }
