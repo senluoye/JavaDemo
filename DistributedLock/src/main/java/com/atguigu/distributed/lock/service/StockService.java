@@ -32,7 +32,7 @@ public class StockService {
     private DistributedLockClient client;
 
     public void checkAndLock() {
-        DistributedRedisLock lock = client.getRedisLock();
+        DistributedRedisLock lock = client.getRedisLock("lock");
         lock.lock();
         try {
             // 获取库存
@@ -43,9 +43,16 @@ public class StockService {
                     template.opsForValue().set("stock", String.valueOf(--st));
                 }
             }
+            test(lock);
         } finally {
             lock.unlock();
         }
+    }
+
+    public void test(DistributedRedisLock lock) {
+        lock.lock();
+        System.out.println("可重入成功");
+        lock.unlock();
     }
 
     public void checkAndLock3() {

@@ -4,7 +4,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.UUID;
 
 /**
  * @ClassName DistributedLockClient
@@ -17,15 +16,13 @@ import java.util.UUID;
 public class DistributedLockClient {
 
     @Resource
-    private StringRedisTemplate redisTemplate;
+    private StringRedisTemplate StringRedisTemplate;
 
-    private final String uuid;
 
     public DistributedLockClient() {
-        this.uuid = UUID.randomUUID().toString();
     }
 
     public DistributedRedisLock getRedisLock(String lockName) {
-        return new DistributedRedisLock(redisTemplate, lockName, uuid);
+        return new DistributedRedisLock(StringRedisTemplate, lockName);
     }
 }

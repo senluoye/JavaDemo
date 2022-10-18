@@ -6,15 +6,17 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 /**
  * @ClassName DistributedRedisLock
- * @Description
+ * @Description Redis 实现分布式锁
  * @Author QKS
  * @Version v1.0
  * @Create 2022-10-17 20:01
@@ -29,10 +31,10 @@ public class DistributedRedisLock implements Lock {
 
     private long expire = 30;
 
-    public DistributedRedisLock(StringRedisTemplate redisTemplate, String lockName, String uuid) {
+    public DistributedRedisLock(StringRedisTemplate redisTemplate, String lockName) {
         this.redisTemplate = redisTemplate;
         this.lockName = lockName;
-        this.uuid = uuid;
+        this.uuid = UUID.randomUUID().toString();
     }
 
     @Override
@@ -65,17 +67,24 @@ public class DistributedRedisLock implements Lock {
     @Override
     public boolean tryLock(long time, @NotNull TimeUnit unit) throws InterruptedException {
         if (time != -1) {
-            this.expire = unit.toSeconds(time);
+            expire = unit.toSeconds(time);
         }
 
-        DefaultRedisScript<Boolean> lockScript = new DefaultRedisScript<>();
+        DefaultRedisScript<Long> lockScript = new DefaultRedisScript<>();
         lockScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("lock.lua")));
-        lockScript.setResultType(Boolean.class);
-        Boolean ans = redisTemplate.execute(lockScript, Collections.singletonList(lockName), getId(), String.valueOf(expire));
-        
-        while (Boolean.FALSE.equals(ans)) {
+        lockScript.setResultType(Long.class);
+
+        while (true) {
+            Long ans = redisTemplate.execute(lockScript, Collections.singletonList(lockName), getId(), String.valueOf(expire));
+            if (ans != null && ans == 1) {
+                break;
+            }
+
             Thread.sleep(50);
         }
+
+        renewExpire();
+
         return true;
     }
 
@@ -84,17 +93,12 @@ public class DistributedRedisLock implements Lock {
      */
     @Override
     public void unlock() {
-        String script = "if redis.call('hexists', KEYS[1], ARGV[1]) == 0 " +
-                "then " +
-                "   return nil " +
-                "elseif redis.call('hincrby', KEYS[1], ARGV[1], -1) == 0 " +
-                "then " +
-                "   return redis.call('del', KEYS[1]) " +
-                "else " +
-                "   return 0 " +
-                "end";
-        Long flag = this.redisTemplate.execute(new DefaultRedisScript<>(script, Long.class), Arrays.asList(lockName), getId());
-        if (flag == null) {
+        DefaultRedisScript<Long> lockScript = new DefaultRedisScript<>();
+        lockScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("unlock.lua")));
+        lockScript.setResultType(Long.class);
+        Long ans = redisTemplate.execute(lockScript, Collections.singletonList(lockName), getId(), String.valueOf(expire));
+        System.out.println(ans);
+        if (ans == null) {
             throw new IllegalMonitorStateException("this lock doesn't belong to you!");
         }
     }
@@ -110,6 +114,26 @@ public class DistributedRedisLock implements Lock {
      * @return
      */
     String getId() {
-        return uuid + ":" + Thread.currentThread().getId();
+        return uuid;
+    }
+
+    /**
+     * 利用 Timer 类简单实现一个定时任务
+     */
+    private void renewExpire() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("re new");
+                DefaultRedisScript<Boolean> reNewScript = new DefaultRedisScript<>();
+                reNewScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("renew.lua")));
+                reNewScript.setResultType(Boolean.class);
+                Boolean ans = redisTemplate.execute(reNewScript, Collections.singletonList(lockName), uuid, String.valueOf(expire));
+                // 一旦重新设置成功，再次生成一个定时器
+                if (Boolean.TRUE.equals(ans)) {
+                    renewExpire();
+                }
+            }
+        }, this.expire * 1000 / 3, this.expire * 1000 / 3);
     }
 }
