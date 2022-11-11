@@ -24,7 +24,8 @@ public class HelloController {
 
     @RequestMapping("/test")
     public void test(){
-        Account account = accountMapper.selectOne(        new QueryWrapper<>()eq("username","user"));
+        Account account = accountMapper.selectOne(new QueryWrapper<Account>()
+                .eq("username","user"));
         System.out.println(account);
     }
 }
