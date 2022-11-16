@@ -1,8 +1,6 @@
-package com.gibs.keyan.util;
+package com.qks.httpclientdemo;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.gibs.keyan.model.User;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -11,7 +9,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import javax.xml.transform.Source;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -45,34 +42,34 @@ public class HttpUtils {
         String currentTimeTamp = getTimestamp();
 
         /**
-         *  Header 部分
+         * Header 部分
          */
         Map<String, String> header = new HashMap<>();
-        //系统标识
+        // 系统标识
         String systemId = "授权用户名";
-        //密码
+        // 密码
         String password = "授权密码";
-        //header
+        // header
         header.put("systemid", systemId);
         header.put("currentDateTime", currentTimeTamp);
         String md5Source = systemId + password + currentTimeTamp;
         String md5OfStr = getMD5Str(md5Source).toLowerCase();
-        //Md5是：系统标识 + 密码 + 时间戳 并且md5加密的结果
+        // Md5是：系统标识 + 密码 + 时间戳 并且md5加密的结果
         header.put("Md5", md5OfStr);
         paramDataJson.put("header", header);
 
         /**
-         *  Data 部分
+         * Data 部分
          */
         List<JSONObject> data = new ArrayList<>();
         JSONObject dataTemp = new JSONObject();
-        //封装 operationinfo 参数
+        // 封装 operationinfo 参数
         JSONObject operationinfo = new JSONObject();
         operationinfo.put("operationDate", 1);
         operationinfo.put("operator", 1);
         operationinfo.put("operationTime", 1);
         dataTemp.put("operationinfo", operationinfo);
-        //封装 mainTable 参数
+        // 封装 mainTable 参数
         JSONObject mainTable = new JSONObject();
         mainTable.put("wpcbtxnr", "1");
         mainTable.put("wpcbtxsj", "1");
@@ -85,7 +82,7 @@ public class HttpUtils {
         // 发送请求
         try (CloseableHttpResponse response = send(params)) {
             if (response != null && response.getEntity() != null) {
-                //返回信息
+                // 返回信息
                 String resulString = EntityUtils.toString(response.getEntity());
                 System.out.println("返回信息: " + resulString);
             } else {
@@ -106,7 +103,7 @@ public class HttpUtils {
     public static CloseableHttpResponse send(Map<String, Object> params) throws IOException {
         HttpPost httpPost = new HttpPost(URGE_EXPERT_URI);
 
-        //装填参数
+        // 装填参数
         List<BasicNameValuePair> nvps = new ArrayList<>();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             nvps.add(new BasicNameValuePair(entry.getKey(), JSONObject.toJSONString(entry.getValue())));
@@ -130,19 +127,19 @@ public class HttpUtils {
      * @return
      */
     public static String getMD5Str(String plainText) {
-        //定义一个字节数组
+        // 定义一个字节数组
         byte[] secretBytes;
         try {
             // 生成一个MD5加密计算摘要
             MessageDigest md = MessageDigest.getInstance("MD5");
-            //对字符串进行加密
+            // 对字符串进行加密
             md.update(plainText.getBytes());
-            //获得加密后的数据
+            // 获得加密后的数据
             secretBytes = md.digest();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("没有md5这个算法！");
         }
-        //将加密后的数据转换为16进制数字
+        // 将加密后的数据转换为16进制数字
         StringBuilder md5code = new StringBuilder(new BigInteger(1, secretBytes).toString(16));
         // 如果生成数字未满32位，需要前面补0
         for (int i = 0; i < 32 - md5code.length(); i++) {
@@ -192,7 +189,7 @@ public class HttpUtils {
     }
 
     /**
-     * 获取时间戳   格式如：19990101235959
+     * 获取时间戳 格式如：19990101235959
      *
      * @return 时间戳
      */
