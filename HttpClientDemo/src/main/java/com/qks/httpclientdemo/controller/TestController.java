@@ -1,9 +1,12 @@
 package com.qks.httpclientdemo.controller;
 
-import com.alibaba.fastjson.JSONObject;
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * @ClassName controller.TestController
@@ -15,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
     @PostMapping("/api/test")
-    public void test(@RequestBody JSONObject object) {
+    public void test(@RequestParam Map<String, Object> object) {
         System.out.println(object);
     }
 }
