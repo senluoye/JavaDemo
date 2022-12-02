@@ -1,8 +1,16 @@
-package com.qks.freemarkerdemo.entity;/**
+package com.qks.freemarkerdemo.entity;
+
+import lombok.Data;
+
+/**
  * @ClassName Person
- * @Description 
+ * @Description
  * @Author QKS
  * @Version v1.0
  * @Create 2022-11-09 11:23
- */public class Person {
+ */
+@Data
+public class Person {
+    private int id;
+    private String name;
 }

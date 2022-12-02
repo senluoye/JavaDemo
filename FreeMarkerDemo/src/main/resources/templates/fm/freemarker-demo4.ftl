@@ -1,3 +1,3 @@
-<#list person as p>
-    ${p.id}/${p.name}
+<#list mxs?keys as k>
+    ${k}/${mxs[k]}
 </#list>

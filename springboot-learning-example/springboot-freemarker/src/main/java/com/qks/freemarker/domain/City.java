@@ -1,4 +1,4 @@
-package org.spring.springboot.domain;
+package com.qks.freemarker.domain;
 
 /**
  * 城市实体类

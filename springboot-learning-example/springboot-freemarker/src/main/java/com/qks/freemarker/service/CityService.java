@@ -1,6 +1,6 @@
-package org.spring.springboot.service;
+package com.qks.freemarker.service;
 
-import org.spring.springboot.domain.City;
+import com.qks.freemarker.domain.City;
 
 import java.util.List;
 

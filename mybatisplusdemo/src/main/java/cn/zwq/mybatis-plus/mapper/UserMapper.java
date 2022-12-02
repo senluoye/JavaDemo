@@ -1,7 +1,5 @@
-package cn.zwq.mybatis-plus.mapper;
-
-import cn.zwq.mybatis-plus.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.qks.mybatisplusdemo.po.User;
 
 /**
  * <p>

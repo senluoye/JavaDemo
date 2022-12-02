@@ -1,12 +1,13 @@
-package org.spring.springboot.controller;
+package com.qks.freemarker.controller;
 
-import org.spring.springboot.domain.City;
-import org.spring.springboot.service.CityService;
+import com.qks.freemarker.domain.City;
+import com.qks.freemarker.service.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ import java.util.List;
 @Controller
 public class CityController {
 
-    @Autowired
+    @Resource
     private CityService cityService;
 
     @RequestMapping(value = "/api/city/{id}", method = RequestMethod.GET)

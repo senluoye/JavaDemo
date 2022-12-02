@@ -1,7 +1,9 @@
-package org.spring.springboot.dao;
+package com.qks.freemarker.dao;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.spring.springboot.domain.City;
+import com.qks.freemarker.domain.City;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -10,6 +12,7 @@ import java.util.List;
  *
  * Created by bysocket on 07/02/2017.
  */
+//@Mapper
 public interface CityDao {
 
     /**

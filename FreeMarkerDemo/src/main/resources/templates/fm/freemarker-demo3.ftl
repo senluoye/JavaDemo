@@ -1,2 +1,3 @@
-${person.id}
-${person.name}
+<#list person as p>
+    ${p.id}/${p.name}
+</#list>

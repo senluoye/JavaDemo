@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="org.spring.springboot.dao.CityDao">
-	<resultMap id="BaseResultMap" type="org.spring.springboot.domain.City">
+<mapper namespace="com.qks.freemarker.dao.CityDao">
+	<resultMap id="BaseResultMap" type="com.qks.freemarker.domain.City">
 		<result column="id" property="id" />
 		<result column="province_id" property="provinceId" />
 		<result column="city_name" property="cityName" />
@@ -25,14 +25,14 @@
 		from city
 	</select>
 
-	<insert id="saveCity" parameterType="City" useGeneratedKeys="true" keyProperty="id">
+	<insert id="saveCity" parameterType="com.qks.freemarker.domain.City" useGeneratedKeys="true" keyProperty="id">
 		insert into
 			city(id,province_id,city_name,description)
 		values
 			(#{id},#{provinceId},#{cityName},#{description})
 	</insert>
 
-	<update id="updateCity" parameterType="City">
+	<update id="updateCity" parameterType="com.qks.freemarker.domain.City">
 		update
 			city
 		set
