@@ -21,8 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 @ControllerAdvice
 @Slf4j
 public class SpringControllerAdvice {
+
     /**
      * 应用到所有被@RequestMapping注解的方法，在其执行之前初始化数据绑定器
+     *
      * @param binder
      */
     @InitBinder
@@ -41,6 +43,7 @@ public class SpringControllerAdvice {
 
     /**
      * 把值绑定到Model中，使全局@RequestMapping可以获取到该值
+     *
      * @param model
      */
     @ModelAttribute
@@ -52,6 +55,7 @@ public class SpringControllerAdvice {
 
     /**
      * 全局异常捕捉处理
+     *
      * @param ex
      * @return
      */
